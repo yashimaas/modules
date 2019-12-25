@@ -6,10 +6,11 @@ from scipy import special
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+from IPython.display import display
 
 class Core():
 
-  def __init__(self, x_train, x_test, y_train):
+  def __init__(self, x_train, x_test, y_train, df_option=''):
     self.x_train = x_train
     self.x_test = x_test
     self.y_train = y_train
@@ -602,3 +603,25 @@ class Process(Core):
     else:
       for col in input_cols:
         print(self.x_all[col].value_counts(),'\n')
+        
+        
+  
+  @classmethod
+  def basic_eda(cls,df_option):
+    df = df_option.copy()
+    print("----------TOP 5 RECORDS--------")
+    print(display(df.head(5)))
+    print("----------INFO-----------------")
+    print(df.info())
+    print("----------Describe-------------")
+    print(display(df.describe()))
+    print("----------Columns--------------")
+    print(df.columns)
+    print("----------Data Types-----------")
+    print(df.dtypes)
+    print("-------Missing Values----------")
+    print(df.isnull().sum())
+    print("-------NULL values-------------")
+    print(df.isna().sum())
+    print("-----Shape Of Data-------------")
+    print(df.shape)
