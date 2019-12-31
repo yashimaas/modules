@@ -7,6 +7,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 from IPython.display import display
+import copy
+from tqdm import tqdm
 
 class Core():
 
@@ -65,8 +67,8 @@ class Core():
 
 class Process(Core):
   
-  def __init__(self, x_train, x_test, y_train):
-    super().__init__(x_train, x_test, y_train)
+  def __init__(self, x_train, x_test, y_train, df_option):
+    super().__init__(x_train, x_test, y_train, df_option)
 
   '''
   INTERFACE
@@ -605,7 +607,7 @@ class Process(Core):
         print(self.x_all[col].value_counts(),'\n')
         
         
-  
+           
   @classmethod
   def basic_eda(cls,df_option):
     df = df_option.copy()
@@ -625,3 +627,27 @@ class Process(Core):
     print(df.isna().sum())
     print("-----Shape Of Data-------------")
     print(df.shape)
+    
+
+
+class MakeFeatures(Core):
+  
+  def __init__(self, x_train, x_test, y_train, df_option):
+    super().__init__(x_train, x_test, y_train, df_option)
+    
+  '''
+  CLASS METHOD
+  '''
+  @classmethod
+  def lag(cls, df_option, col_refference, col_name_shift, col_name_add, col_lags=[1]):
+    df = df_option.copy()
+    lags = copy.deepcopy(col_lags)
+    col_ref = copy.deepcopy(col_refference)
+    tmp = df[col_ref + [col_name_add]]
+    for i in tqdm(lags):
+        shifted = tmp.copy()
+        # shifted.columns = ['date_block_num','shop_id','item_id', col+'_lag_'+str(i)]
+        shifted.columns = col_ref + [col_name_add+'_lag_'+str(i)]
+        shifted[col_name_shift] += i
+        df = pd.merge(df, shifted, on=col_ref, how='left')
+    return df
